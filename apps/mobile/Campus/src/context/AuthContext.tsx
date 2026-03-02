@@ -5,24 +5,27 @@ import api from "../api/axios";
 const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: any) => {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadUser = async () => {
+    const loadUser = async () => {
+        try {
             const token = await AsyncStorage.getItem("token");
+
             if (token) {
-                try {
-                    // Re-fetch profile so we have _id, name, email etc — not just the token
-                    const res = await api.get("/auth/profile");
-                    setUser({ ...res.data, token });
-                } catch {
-                    // Token expired / invalid — clear it
-                    await AsyncStorage.removeItem("token");
-                }
+                const res = await api.get("/auth/profile");
+                setUser({ ...res.data, token });
             }
-        };
-        loadUser();
-    }, []);
+        } catch (error) {
+            await AsyncStorage.removeItem("token");
+        } finally {
+            setLoading(false); // 🔥 THIS WAS MISSING
+        }
+    };
+
+    loadUser();
+}, []);
 
     const login = async (email: string, password: string) => {
         const res = await api.post("/auth/login", { email, password });
@@ -46,7 +49,7 @@ export const AuthProvider = ({ children }: any) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
+        <AuthContext.Provider value={{ user,loading, login, register, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
