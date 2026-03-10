@@ -6,8 +6,6 @@ import authRoutes from "./src/routes/authRoutes.js";
 import protect from "./src/middleware/authMiddleware.js";
 import postRoutes from "./src/routes/postRoutes.js";
 
-
-
 dotenv.config();
 connectDB();
 
