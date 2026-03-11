@@ -25,8 +25,15 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 export default function Login() {
-    const { login, register } = useAuth();
+    const { login, register, user } = useAuth();
     const [mode, setMode] = useState<"login" | "register">("login");
+
+    // If already logged in, skip the login screen
+    useEffect(() => {
+        if (user) {
+            router.replace("/(tabs)/feed");
+        }
+    }, [user]);
 
     // Login fields
     const [email, setEmail] = useState("");
