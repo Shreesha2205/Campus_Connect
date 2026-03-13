@@ -258,8 +258,30 @@ The web app will be at `http://localhost:5173`
 ---
 
 ## 📸 Screenshots
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/d5f7f4fe-a503-4173-9d5f-8198643b6bd4" alt="Screen 1" width="250" /><br />
+      <b>Profile Page</b>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/0b1c2873-31e5-480a-ac69-c4b0d945b8df" alt="Screen 2" width="250" /><br />
+      <b>New Post Page</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/09f79541-79fe-412e-938f-ce96e97d5cfa" alt="Screen 3" width="250" /><br />
+      <b>Home Page</b>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/132746a8-0b6d-451e-b8c3-9e36680725c0" alt="Screen 4" width="250" /><br />
+      <b>Loading Page</b>
+    </td>
+  </tr>
+</table>
 
-> _Screenshots coming soon — scan the QR from `npx expo start` to see the live app._
+
 
 | Screen | Description |
 |--------|-------------|
