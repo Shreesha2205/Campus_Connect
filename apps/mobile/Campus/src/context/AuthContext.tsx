@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../api/axios";
+import api, { warmUpServer } from "../api/axios";
 
 const AuthContext = createContext<any>(null);
 
@@ -9,23 +9,30 @@ export const AuthProvider = ({ children }: any) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    const loadUser = async () => {
-        try {
-            const token = await AsyncStorage.getItem("token");
+        const loadUser = async () => {
+            try {
+                const token = await AsyncStorage.getItem("token");
 
-            if (token) {
-                const res = await api.get("/auth/profile");
-                setUser({ ...res.data, token });
+                if (token) {
+                    // 🔥 Restore session + ping server in parallel
+                    const [res] = await Promise.all([
+                        api.get("/auth/profile"),
+                        warmUpServer(),
+                    ]);
+                    setUser({ ...res.data, token });
+                } else {
+                    // No token — pre-warm the server so login is fast
+                    warmUpServer();
+                }
+            } catch (error) {
+                await AsyncStorage.removeItem("token");
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            await AsyncStorage.removeItem("token");
-        } finally {
-            setLoading(false); // 🔥 THIS WAS MISSING
-        }
-    };
+        };
 
-    loadUser();
-}, []);
+        loadUser();
+    }, []);
 
     const login = async (email: string, password: string) => {
         const res = await api.post("/auth/login", { email, password });
@@ -49,7 +56,7 @@ export const AuthProvider = ({ children }: any) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user,loading, login, register, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

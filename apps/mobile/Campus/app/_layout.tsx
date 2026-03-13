@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, Redirect } from "expo-router";
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -117,15 +117,18 @@ function RootNavigator() {
           animation: "fade_from_bottom",
         }}
       >
-        {!loading && !user ? (
-          <Stack.Screen name="login" />
-        ) : (
-          <>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="modal" />
-          </>
-        )}
+        {/* Always declare all screens so Expo Router knows about them */}
+        <Stack.Screen name="login" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="modal" />
       </Stack>
+
+      {/*
+        🔑 Auth gate — runs AFTER loading is done.
+        Stack.Screen only sets options; it does NOT block navigation.
+        A <Redirect> is the only reliable way to enforce auth in Expo Router.
+      */}
+      {!loading && !user && <Redirect href="/login" />}
 
       {loading && <LoadingScreen />}
     </>

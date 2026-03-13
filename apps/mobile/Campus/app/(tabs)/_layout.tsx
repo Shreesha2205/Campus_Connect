@@ -1,7 +1,8 @@
-import { Tabs } from "expo-router";
+import { Tabs, Redirect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { View, StyleSheet, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "../../src/context/AuthContext";
 
 function TabBarIcon({
   name,
@@ -31,6 +32,12 @@ function ComposeTabIcon({ focused }: { focused: boolean }) {
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = 60 + (Platform.OS === "ios" ? insets.bottom : 8);
+  const { user, loading } = useAuth();
+
+  // 🔒 Second-layer guard: if no user, send to login
+  if (!loading && !user) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
